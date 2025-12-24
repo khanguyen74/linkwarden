@@ -14,7 +14,9 @@ async function init() {
   startRSSPolling();
   linkProcessing(workerIntervalInSeconds);
   startIndexing(workerIntervalInSeconds);
-  trialEndEmailWorker();
+  if (process.env.STRIPE_SECRET_KEY) {
+    trialEndEmailWorker();
+  }
 }
 
 init();
