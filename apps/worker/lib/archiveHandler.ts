@@ -20,11 +20,12 @@ const BROWSER_TIMEOUT = Number(process.env.BROWSER_TIMEOUT) || 5;
 
 export default async function archiveHandler(
   link: LinkWithCollectionOwnerAndTags,
-  browser: Browser
+  browser: Browser | null
 ) {
   const user = link.collection?.owner;
 
   if (
+    !browser ||
     process.env.DISABLE_PRESERVATION === "true" ||
     (!link.url?.startsWith("http://") && !link.url?.startsWith("https://"))
   ) {

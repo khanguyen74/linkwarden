@@ -4,14 +4,17 @@ import { delay } from "@linkwarden/lib";
 import getLinkBatchFairly from "../lib/getLinkBatchFairly";
 import { launchBrowser } from "../lib/browser";
 import { countUnprocessedBillableLinks } from "../lib/countUnprocessedBillableLinks";
+import { Browser } from "playwright";
 
 const ARCHIVE_TAKE_COUNT = Number(process.env.ARCHIVE_TAKE_COUNT || "") || 5;
 const BROWSER_MAX_AGE_MS = 30 * 60 * 1000; // 30 minutes
+const BROWSER_TIMEOUT_MS =
+  (Number(process.env.BROWSER_TIMEOUT_MINUTES) || 5) * 60 * 1000;
 
 export async function linkProcessing(interval = 10) {
   console.log("\x1b[34m%s\x1b[0m", "Starting link processing...");
 
-  let browser = await launchBrowser();
+  let browser: Browser | null = null;
   let browserStartTs = Date.now();
 
   // Helper to (re)launch browser
@@ -28,7 +31,10 @@ export async function linkProcessing(interval = 10) {
 
   while (true) {
     // Restart every 30 minutes to prevent clogging
-    if (Date.now() - browserStartTs >= BROWSER_MAX_AGE_MS) {
+    if (
+      browser?.isConnected() &&
+      Date.now() - browserStartTs >= BROWSER_MAX_AGE_MS
+    ) {
       await restartBrowser("30-minute rotation");
     }
 
@@ -37,8 +43,28 @@ export async function linkProcessing(interval = 10) {
     });
 
     if (links.length === 0) {
+      if (
+        browser?.isConnected() &&
+        Date.now() - browserStartTs >= BROWSER_TIMEOUT_MS
+      ) {
+        // Close browser after inactivity timeout
+        await browser.close();
+        console.log(
+          "\x1b[34m%s\x1b[0m",
+          "Closing browser due to inactivity..."
+        );
+      }
       await delay(interval);
       continue;
+    }
+
+    if (
+      !browser?.isConnected() &&
+      process.env.DISABLE_PRESERVATION?.toLowerCase() !== "true"
+    ) {
+      browser = await launchBrowser();
+      console.log("\x1b[34m%s\x1b[0m", "Launched new browser instance.");
+      browserStartTs = Date.now();
     }
 
     const archiveLink = async (link: LinkWithCollectionOwnerAndTags) => {
@@ -61,7 +87,10 @@ export async function linkProcessing(interval = 10) {
           error
         );
 
-        if (!browser.isConnected?.()) {
+        if (
+          !browser?.isConnected() &&
+          process.env.DISABLE_PRESERVATION?.toLowerCase() !== "true"
+        ) {
           await restartBrowser("browser disconnected");
         }
       }
