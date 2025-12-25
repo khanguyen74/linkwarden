@@ -4913,6 +4913,7 @@ __metadata:
     "@types/react-dom": "npm:18.3.1"
     "@types/react-window": "npm:^1.8.8"
     "@types/rss": "npm:^0.0.32"
+    "@types/semver": "npm:^7.7.1"
     "@types/shelljs": "npm:^0.8.15"
     autoprefixer: "npm:^10.4.14"
     axios: "npm:^1.5.1"
@@ -4959,6 +4960,7 @@ __metadata:
     react-window: "npm:^1.8.10"
     rss: "npm:^1.2.2"
     rss-parser: "npm:^3.13.0"
+    semver: "npm:^7.7.3"
     sharp: "npm:^0.34.5"
     socks-proxy-agent: "npm:^8.0.2"
     stripe: "npm:^18.4.0"
@@ -8402,6 +8404,13 @@ __metadata:
   version: 0.0.32
   resolution: "@types/rss@npm:0.0.32"
   checksum: 10c0/b8e214cde30f0d31ad468bcdc8f5370ce7a4b0dc6f2cb131dcfa115a90b6dbc765c4f668e551d5638072f8c1f25e0e81048c3c684b046c91803a9e0dec157c72
+  languageName: node
+  linkType: hard
+
+"@types/semver@npm:^7.7.1":
+  version: 7.7.1
+  resolution: "@types/semver@npm:7.7.1"
+  checksum: 10c0/c938aef3bf79a73f0f3f6037c16e2e759ff40c54122ddf0b2583703393d8d3127130823facb880e694caa324eb6845628186aac1997ee8b31dc2d18fafe26268
   languageName: node
   linkType: hard
 
