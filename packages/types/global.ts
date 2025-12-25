@@ -188,3 +188,9 @@ export interface MobileData {
   theme: "light" | "dark" | "system";
   preferredBrowser: "app" | "system";
 }
+
+export interface VersionResponse {
+  updateAvailable: boolean;
+  latestVersion: string;
+  currentVersion: string;
+}
